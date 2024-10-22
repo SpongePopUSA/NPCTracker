@@ -1,4 +1,21 @@
 class ID:
+    """
+    Generic identifier for an object
+
+    Attributes:
+        Static:
+            _next_npc   :   Integer to be assigned as self.num for the next instance held of ID by an NPC
+            _next_event :   Integer to be assigned as self.num for the next instance of ID held by an event
+            _next_other :   Integer to be assigned as self.num for the next instance of ID held by an unspecified class
+        Instance:
+            holder      :   The object to which this instance of ID is assigned
+            num         :   Integer assigned to this instance of ID, unique amongst instances of ID with the same tag
+            tag         :   Character representing holder's type ('n' = NPC, 'e' = Event, 'o' = Other)
+    Methods:
+        None, operations are to be handled by IDTracker
+    """
+
+    # Class attributes
     _next_npc = 1
     _next_event = 1
     _next_other = 1
@@ -8,6 +25,7 @@ class ID:
         self.holder = holder
         self.num:int = None
         self.tag:chr = None
+
         match (t):
             case 1:
                 self.num = ID._next_npc
