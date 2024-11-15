@@ -58,7 +58,7 @@ class IDTracker:
             else:
                 continue
     # Returns the holder of the id represented by id_string
-    def findByID (id_string:str) -> ID:
+    def findByID (id_string:str):
         true_id = IDTracker.idFromString(id_string)
 
         return true_id.holder

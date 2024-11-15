@@ -106,7 +106,7 @@ Please select from the following:
         if choice.lstrip('-').isnumeric():    
             match int(choice):
                 case 1:
-                    decorate(chowNPCInfo, item = '#')
+                    decorate(showNPCInfo, item = '#')
                     choice = None
                 case 2:
                     decorate(showEventInfo, item = '#')
@@ -132,7 +132,7 @@ Please select from the following:
     print("\n")
 
 # Search for an NPC and display its info to the user           
-def chowNPCInfo ():
+def showNPCInfo ():
     # Intro message
     print("Welcome to the NPC search!\nType <EXIT> at any time to return to the main menu.\n")
 
@@ -144,6 +144,7 @@ def chowNPCInfo ():
         elif IDTracker.checkId(choice + 'n'):
             character:NPC = IDTracker.findByID(choice + 'n')
             print(character.getSummary())
+            choice = None
         else:
             print("No NPC was found with that ID.")
             choice = None
@@ -151,7 +152,6 @@ def chowNPCInfo ():
 def showEventInfo ():
     # Intro message
     print("Welcome to the event search!\nType <EXIT> at any time to return to the main menu.\n")
-
 
     choice = None
     while choice == None:
