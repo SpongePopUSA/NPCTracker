@@ -462,9 +462,7 @@ def saveAndClose ():
 
 def main():
     initializeData()
-
     displayMainMenu()
-
     update()
     saveAndClose()
 
