@@ -60,12 +60,13 @@ def initializeData ():
             y = int(val[3])
 
             # Store list of affected/delta pairs
-            ad_pairs:list[str] = str(val[5]).split(",")
+            ad_pairs:list[str] = str(val[4]).split(",")
             # List of (affected, delta) tuples
             ad_tuples:list[tuple[str, int]] = []
             # Populate ad_tuples
             for p in ad_pairs:
                 if p != "None":
+                    # String
                     split_pair = p.split("/")
                     # String representation of character's ID
                     id_string = split_pair[0] + 'n'
@@ -75,7 +76,7 @@ def initializeData ():
 
             # List of id_strings of killed NPC's
             killed_list:list[str] = []
-            for i in str(val[6]).split(','):
+            for i in str(val[5]).split(','):
                 if i != "None":
                     killed_list.append(i + 'n')
             # Add event to list
@@ -204,7 +205,7 @@ def addNewNPC ():
 
     update(update_npcs = True)
     print("Saving...")
-    wb.save("PartyStatus.xlsx")
+    # wb.save("TestSheet.xlsx")
 
 # Create a new NPC
 def addNewEvent ():
@@ -394,11 +395,11 @@ def addNewEvent ():
 
     update(update_events = True)
     print("Saving...")
-    wb.save("PartyStatus.xlsx")
+    # wb.save("TestSheet.xlsx")
 
 # Update workbook with current NPC's and Events
 def update(update_npcs:bool = True, update_events:bool = True):
-    wb.save("PartyStatus_Backup.xlsx")
+    # wb.save("PartyStatus_Backup.xlsx")
 
     if update_npcs:
         print("\nUpdating NPC's...\n")
@@ -465,7 +466,7 @@ def update(update_npcs:bool = True, update_events:bool = True):
 # Save changes to workbook and close
 def saveAndClose ():
     print("Saving...")
-    wb.save("PartyStatus.xlsx")
+    # wb.save("TestSheet.xlsx")
     wb.close()
 
 def main():
