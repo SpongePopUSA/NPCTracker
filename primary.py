@@ -1,8 +1,6 @@
 # primary.py
 # This program keeps track of NPC's in the Elcria Campaign
 
-# TODO: Implement event search via NPC
-
 from decorator import *
 from id import IDTracker
 from npc import NPC
