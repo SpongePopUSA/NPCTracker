@@ -10,8 +10,20 @@ from openpyxl.worksheet.worksheet import Worksheet
 import time
 
 # Initialize workbook and worksheet
-wb:Workbook = load_workbook("PartyStatus.xlsx")
+wb:Workbook = load_workbook("TestSheet.xlsx")
 ws:Worksheet = wb.active
+# Bounds of npc table
+npcBounds = {
+    "topRow"    : 4,
+    "leftCol"   : 2,
+    "rightCol"  : 3
+}
+# Bounds of event table
+eventBounds = {
+    "topRow"    : 4,
+    "leftCol"   : 5,
+    "rightCol"  : 11
+}
 # Create npc and event lists
 eventsList:list[Event] = []
 npcList:list[NPC] = []
@@ -20,14 +32,12 @@ npcList:list[NPC] = []
 def initializeData ():
     print("Initializing NPC's...\n")
     # Iterate across NPC table
-    for val in ws.iter_rows(min_row = 4, min_col = 2, max_col = 6, values_only = True):
+    for val in ws.iter_rows(min_row = npcBounds["topRow"], min_col = npcBounds["leftCol"], max_col = npcBounds["rightCol"], values_only = True):
         if (val[0] != None):
             # Store name
             name = str(val[0])
-            # Store life status
-            liv = bool(val[1])
             # Add NPC to list
-            new_NPC = NPC(name = name, rep_score = 0, is_alive = liv)
+            new_NPC = NPC(name = name)
             npcList.append(new_NPC)
             # Display progress with time delay for aesthetics
             print("Initialized: {0}".format(new_NPC))
@@ -38,7 +48,7 @@ def initializeData ():
 
     print("Initializing events...\n")
     # Iterate across event table
-    for val in ws.iter_rows(min_row = 4, min_col = 8, max_col = 15, values_only = True):
+    for val in ws.iter_rows(min_row = eventBounds["topRow"], min_col = eventBounds["leftCol"], max_col = eventBounds["rightCol"], values_only = True):
         if val[0] != None:
             # Store title
             title = val[0]
