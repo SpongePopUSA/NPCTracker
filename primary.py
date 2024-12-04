@@ -100,7 +100,6 @@ def initializeData ():
         # If the row is empty, skip iteration
         else: continue
     print("\nDone.")
-        
 # Display naviagation options
 def displayMainMenu ():
     # Dictionary representing options in the menu and the functions that they call
@@ -128,53 +127,73 @@ def displayMainMenu ():
             # Take input
             choice:int = int(input("Selection: "))
             # If the user chooses to exit
-            if choice == -1:
-                # Exit displayMainMenu()
-                return
+            if choice == -1: return
             # Decorate the chosen function with a line of hashtags
             decorate(options[choice][0], item = '#')
+            # Reset choice
+            choice = None
+            # Next iteration
+            continue
         # If the input is not a valid type
         except ValueError:
             print("Please input an integer.")
             # Reset choice
             choice = None
-            # Skip iteration
+            # Next iteration
             continue
         # If the input is not a valid option
         except KeyError:
             print("Please input a valid option.")
             # Reset choice
             choice = None
-            # Skip iteration
+            # Next iteration
             continue
         # If some other error occurred
         except Exception as error:
-            print(error)
             print("Something went wrong, please try again.")
             # Reset choice
             choice = None
-            # Skip iteration
+            # Next iteration
             continue
     # Gap
     print("\n")
-
 # Search for an NPC and display its info to the user           
 def showNPCInfo ():
     # Intro message
-    print("Welcome to the NPC search!\nType <EXIT> at any time to return to the main menu.\n")
-
+    print("Welcome to the NPC search!\n")
+    
+    # Variable for user's input
     choice = None
+    # While the user has not made a valid choice
     while choice == None:
-        choice = input("\nPlease input the NPC's ID without holder tag (or <EXIT> to quit): ").strip()
-        if (choice == "<EXIT>"):
-            return
-        elif IDTracker.checkId(choice + 'n'):
+        try:
+            # Prompt user for input
+            choice = input("Please input the NPC's ID without holder tag (or <EXIT> to quit): ").strip()
+            # If the user chooses to exit
+            if choice == "<EXIT>": return
+            # The character associated by the inputted ID
             character:NPC = IDTracker.findByID(choice + 'n')
+            # Display character summary
             print(character.getSummary())
+            # Reset choice
             choice = None
-        else:
-            print("No NPC was found with that ID.")
+            # Next iteration
+            continue
+        # If the input is not a valid ID
+        except AttributeError:
+            print("Please input a valid ID.")
+            # Reset choice
             choice = None
+            # Next iteration
+            continue
+        # If some other error occurred
+        except Exception as error:
+            print("Something went wrong, please try again.")
+            # Reset choice
+            choice = None
+            # Next iteration
+            continue
+
 # Search for an event and display its info to the user           
 def showEventInfo ():
     # Intro message

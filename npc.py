@@ -73,6 +73,7 @@ class NPC:
 
    Reputation Category  :  {2}
         
-                Alive?  :  {3}""".format(self.name, self.rep_score, self.rep_category.name.capitalize(), self.is_alive)
+                Alive?  :  {3}
+                """.format(self.name, self.rep_score, self.rep_category.name.capitalize(), self.is_alive)
 
         return result
