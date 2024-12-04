@@ -462,7 +462,6 @@ def update(update_npcs:bool = True, update_events:bool = True):
         
         print("\nDone.\n")
 
-        
 # Save changes to workbook and close
 def saveAndClose ():
     print("Saving...")
