@@ -24,26 +24,29 @@ eventBounds = {
     "leftCol"   : 5,
     "rightCol"  : 11
 }
-# Create npc and event lists
+# List of events
 eventsList:list[Event] = []
+# List of NPC's
 npcList:list[NPC] = []
 
-# Load workbook and pull data on NPC's and Events
+# Populate event and NPC lists
 def initializeData ():
     print("Initializing NPC's...\n")
     # Iterate across NPC table
     for val in ws.iter_rows(min_row = npcBounds["topRow"], min_col = npcBounds["leftCol"], max_col = npcBounds["rightCol"], values_only = True):
+        # If the row has data
         if (val[0] != None):
             # Store name
             name = str(val[0])
-            # Add NPC to list
+            # Create new NPC
             new_NPC = NPC(name = name)
+            # Add NPC to list
             npcList.append(new_NPC)
             # Display progress with time delay for aesthetics
             print("Initialized: {0}".format(new_NPC))
             time.sleep(.03)
-        else:
-            continue
+        # If the row is empty, skip iteration
+        else: continue
     print("\nDone.\n")
 
     print("Initializing events...\n")
@@ -92,15 +95,13 @@ def initializeData ():
         
 # Display naviagation options
 def displayMainMenu ():
-    # Gap
-    print("\n")
     menu_message = """ 
 Welcome to Elcria's NPC Tracker! 
 
 Please select from the following:
 
      1  :  Get NPC info
-     2  :  Get event nfo
+     2  :  Get event info
      3  :  Add NPC
      4  :  Add event
            
