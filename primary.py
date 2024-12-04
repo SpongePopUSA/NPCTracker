@@ -93,8 +93,9 @@ def initializeData ():
             new_event = Event(title = title, date = Date(d, m, y), involved = ad_tuples, killed = killed_list)
             # Add event to list
             eventsList.append(new_event)
-            # Display progress with time delay for aesthetics
+            # Display progress 
             print(f"Initialized: {new_event}")
+            # Time delay for aesthetics
             time.sleep(.03)
         # If the row is empty, skip iteration
         else: continue
@@ -102,49 +103,58 @@ def initializeData ():
         
 # Display naviagation options
 def displayMainMenu ():
-    menu_message = """ 
-Welcome to Elcria's NPC Tracker! 
-
-Please select from the following:
-
-     1  :  Get NPC info
-     2  :  Get event info
-     3  :  Add NPC
-     4  :  Add event
-           
-    -1  :  Exit
-
-    """
-
+    # Dictionary representing options in the menu and the functions that they call
+    options = {
+    # key : (function, description)
+        1 : (showNPCInfo, "Get NPC info"),
+        2 : (showEventInfo, "Get event info"),
+        3 : (addNewNPC, "Add NPC"),
+        4 : (addNewEvent, "Add event")
+    }
+    # Initialize main menu with header
+    menu_message = "Welcome to Elcria's NPC Tracker!\n\nPlease select from the following:\n\n"
+    # Fill in the menu with descriptions from the options dictionary
+    for key in options:
+        menu_message = menu_message + f"     {key}  :  {options[key][1]}\n"
+    # Add exit option
+    menu_message = menu_message + f"\n    -1  :  Exit\n"
+    # Variable for user's input
     choice = None
+    # While the user has not made a valid choice
     while choice == None:
-        print(menu_message)
-        choice = input("Selection: ")
-        if choice.lstrip('-').isnumeric():    
-            match int(choice):
-                case 1:
-                    decorate(showNPCInfo, item = '#')
-                    choice = None
-                case 2:
-                    decorate(showEventInfo, item = '#')
-                    choice = None
-                case 3:
-                    decorate(addNewNPC, item = '#')
-                    choice = None
-                case 4:
-                    decorate(addNewEvent, item = '#')
-                    choice = None
-                case -1:
-                    return
-                case _:
-                    print("Please input a valid choice.")
-                    choice = None
-                    continue
-        else:
-            print("Please input a number.")
+        try:
+            # Display main menu
+            print(menu_message)
+            # Take input
+            choice:int = int(input("Selection: "))
+            # If the user chooses to exit
+            if choice == -1:
+                # Exit displayMainMenu()
+                return
+            
+            decorate(options[choice][0], item = '#')
+        # If the input is not a valid type
+        except ValueError:
+            print("Please input an integer.")
+            # Reset choice
             choice = None
+            # Skip iteration
             continue
-
+        # If the input is not a valid option
+        except KeyError:
+            print("Please input a valid option.")
+            # Reset choice
+            choice = None
+            # Skip iteration
+            continue
+        # If some other error occurred
+        except Exception as error:
+            print(error)
+            print("Something went wrong, please try again.")
+            # Reset choice
+            choice = None
+            # Skip iteration
+            continue
     # Gap
     print("\n")
 
