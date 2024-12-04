@@ -116,12 +116,15 @@ class Event:
         involved_string = involved_string.rstrip(", ")
         
         result = """
-        Summary of {0}:
+        Summary of event {0}:
 
                  Title  :  {1}
 
-        NPC's Involved  :  {2}
+                  Date  :  {2}
+
+        NPC's Involved  :  {3}
         
-          NPC's Killed  :  {3}""".format(str(self.ident), self.title, involved_string, killed_string)
+          NPC's Killed  :  {4}
+          """.format(str(self.ident.num), self.title, self.date, involved_string, killed_string)
 
         return result

@@ -161,7 +161,6 @@ def displayMainMenu ():
 def showNPCInfo ():
     # Intro message
     print("Welcome to the NPC search!\n")
-    
     # Variable for user's input
     choice = None
     # While the user has not made a valid choice
@@ -193,23 +192,41 @@ def showNPCInfo ():
             choice = None
             # Next iteration
             continue
-
 # Search for an event and display its info to the user           
 def showEventInfo ():
     # Intro message
-    print("Welcome to the event search!\nType <EXIT> at any time to return to the main menu.\n")
-
+    print("Welcome to the event search!\n")
+    # Variable for user's input
     choice = None
+    # While the user has not made a valid choice
     while choice == None:
-        choice = input("\nPlease input the event's ID without holder tag: ").strip()
-        if (choice == "<EXIT>"):
-            return
-        elif IDTracker.checkId(choice + 'e'):
-            event:NPC = IDTracker.findByID(choice + 'e')
+        try:
+            # Prompt user for input
+            choice = input("Please input the event's ID without holder tag (or <EXIT> to quit): ").strip()
+            # If the user chooses to exit
+            if choice == "<EXIT>": return
+            # The event associated by the inputted ID
+            event:Event = IDTracker.findByID(choice + 'e')
+            # Display character summary
             print(event.getSummary())
-        else:
-            print("No event was found with that ID.")
+            # Reset choice
             choice = None
+            # Next iteration
+            continue
+        # If the input is not a valid ID
+        except AttributeError:
+            print("Please input a valid ID.")
+            # Reset choice
+            choice = None
+            # Next iteration
+            continue
+        # If some other error occurred
+        except Exception as error:
+            print("Something went wrong, please try again.")
+            # Reset choice
+            choice = None
+            # Next iteration
+            continue
 # Create a new NPC
 def addNewNPC ():
     # Intro message
