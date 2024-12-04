@@ -86,7 +86,8 @@ def initializeData ():
             for npc_id in str(val[5]).split(','):
                 # If NPC's were killed in this event
                 if npc_id != "None":
-                    killed_list.append(npc_id + 'n')
+                    # Add string representation of NPC ID to list
+                    killed_list.append(npc_id.strip() + 'n')
 
             # Create a new event with info from this row
             new_event = Event(title = title, date = Date(d, m, y), involved = ad_tuples, killed = killed_list)
