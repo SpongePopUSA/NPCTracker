@@ -35,7 +35,7 @@ def initializeData ():
     # Iterate across NPC table
     for val in ws.iter_rows(min_row = npcBounds["topRow"], min_col = npcBounds["leftCol"], max_col = npcBounds["rightCol"], values_only = True):
         # If the row has data
-        if (val[0] != None):
+        if val[0] != None:
             # Store name
             name = str(val[0])
             # Create new NPC
@@ -43,7 +43,7 @@ def initializeData ():
             # Add NPC to list
             npcList.append(new_NPC)
             # Display progress with time delay for aesthetics
-            print("Initialized: {0}".format(new_NPC))
+            print(f"Initialized: {new_NPC}")
             time.sleep(.03)
         # If the row is empty, skip iteration
         else: continue
@@ -52,6 +52,7 @@ def initializeData ():
     print("Initializing events...\n")
     # Iterate across event table
     for val in ws.iter_rows(min_row = eventBounds["topRow"], min_col = eventBounds["leftCol"], max_col = eventBounds["rightCol"], values_only = True):
+        # If the row has data
         if val[0] != None:
             # Store title
             title = val[0]
@@ -67,30 +68,35 @@ def initializeData ():
             # List of (affected, delta) tuples
             ad_tuples:list[tuple[str, int]] = []
             # Populate ad_tuples
-            for p in ad_pairs:
-                if p != "None":
-                    # String
-                    split_pair = p.split("/")
+            for pair in ad_pairs:
+                # If NPC's were affected by this event
+                if pair != "None":
+                    # String list of size 2: [ID of affected NPC, Change in reputation score]
+                    split_pair = pair.split("/")
                     # String representation of character's ID
                     id_string = split_pair[0] + 'n'
                     # Integer representing the change in character's reputation score
                     delta = int(split_pair[1])
+                    # Add new tuple to list
                     ad_tuples.append((id_string, delta))
 
             # List of id_strings of killed NPC's
             killed_list:list[str] = []
-            for i in str(val[5]).split(','):
-                if i != "None":
-                    killed_list.append(i + 'n')
-            # Add event to list
+            # Populate killed_list
+            for npc_id in str(val[5]).split(','):
+                # If NPC's were killed in this event
+                if npc_id != "None":
+                    killed_list.append(npc_id + 'n')
+
+            # Create a new event with info from this row
             new_event = Event(title = title, date = Date(d, m, y), involved = ad_tuples, killed = killed_list)
+            # Add event to list
             eventsList.append(new_event)
             # Display progress with time delay for aesthetics
-            print("Initialized: {0}".format(new_event))
+            print(f"Initialized: {new_event}")
             time.sleep(.03)
-
-        else:
-            break
+        # If the row is empty, skip iteration
+        else: continue
     print("\nDone.")
         
 # Display naviagation options
