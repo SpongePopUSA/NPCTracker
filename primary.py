@@ -131,7 +131,7 @@ def displayMainMenu ():
             if choice == -1:
                 # Exit displayMainMenu()
                 return
-            
+            # Decorate the chosen function with a line of hashtags
             decorate(options[choice][0], item = '#')
         # If the input is not a valid type
         except ValueError:
