@@ -489,7 +489,8 @@ def addNewEvent ():
 
 # Update workbook with current NPC's and Events
 def update(update_npcs:bool = True, update_events:bool = True):
-    # wb.save("PartyStatus_Backup.xlsx")
+    # Save backup
+    wb.save("PartyStatus_Backup.xlsx")
     print("\nUpdating NPC's...\n")
     # Fill NPC data
     for character in npcList:
@@ -557,7 +558,7 @@ def update(update_npcs:bool = True, update_events:bool = True):
 # Save changes to workbook and close
 def saveAndClose ():
     print("Saving...")
-    # wb.save("TestSheet.xlsx")
+    wb.save("TestSheet.xlsx")
     wb.close()
     print("Done.")
 
