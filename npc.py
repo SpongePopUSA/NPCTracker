@@ -10,20 +10,20 @@ class Reputation(Enum):
     GOOD = 4
     GREAT = 5
 
-# Represents a Nonplayer Character
+# Represents a NonPlayer Character
 class NPC:
     # Constructor
-    def __init__(self, name:str, rep_score:int = 0, is_alive = True):
+    def __init__(self, name:str):
         # NPC ID
         self.ident = ID(self, 1)
         # NPC name
         self.name = name
         # NPC reputation score
-        self.rep_score = rep_score
+        self.rep_score = 0
         # NPC reputation category
         self.rep_category = self.evaluateRepCategory()
         # NPC death status
-        self.is_alive = is_alive
+        self.is_alive = True
     # String representation of object
     def __str__(self):
         return self.name

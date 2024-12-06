@@ -150,7 +150,7 @@ def displayMainMenu ():
             continue
         # If some other error occurred
         except Exception as error:
-            print("Something went wrong, please try again.")
+            print(f"Something went wrong, please try again.\nError: {error}")
             # Reset choice
             choice = None
             # Next iteration
@@ -194,7 +194,7 @@ def showNPCInfo ():
                 # Cast from string to int back to string to remove leading zeros
                 character:NPC = IDTracker.findByID(str(int(choice)) + 'n')
                 # Display character summary
-                decorate( character.getSummary(), func = print )
+                print(character.getSummary())
                 # Reset choice
                 choice = None
                 # Next iteration
@@ -220,12 +220,12 @@ def showEventInfo ():
     help_table = ""
     # Populate help_table
     for event in eventsList:
-        # Store name
-        name = event.name
+        # Store title
+        title = event.title
         # Store ID number with leading zeros for single-digit ID's
         num = str(event.ident.num).zfill(2)
         # Add line to help_table
-        help_table = help_table + f"   {num}  :  {name}\n"
+        help_table = help_table + f"   {num}  :  {title}\n"
     # Intro message
     print("Welcome to the NPC search!\nType 'EXIT' to quit or 'HELP' for reference.\n")
     # Variable for user's input
@@ -234,7 +234,7 @@ def showEventInfo ():
     while choice == None:
         try:
             # Prompt user for input
-            choice = input("Please input the event's ID without holder tag (or 'EXIT' to quit): ").strip()
+            choice = input("Please input the event's ID without holder tag: ").strip().upper()
             # If the user chooses to exit
             if choice == "EXIT": return
             # If user asks for reference table
@@ -249,7 +249,7 @@ def showEventInfo ():
                 # Cast from string to int back to string to remove leading zeros
                 event:Event = IDTracker.findByID(str(int(choice)) + 'e')
                 # Display event summary
-                decorate( event.getSummary(), func = print )
+                print( event.getSummary() )
                 # Reset choice
                 choice = None
                 # Next iteration
@@ -276,37 +276,28 @@ def addNewNPC ():
     character_name = None
     # While user has not submitted a valid input
     while character_name == None:
-        character_name = input("Please input the NPC's name : ").strip()
-        if character_name.lstrip(" ") == "":
+        # Prompt for the name of the NPC
+        character_name = input("Please input the NPC's name: ").strip()
+        # If user wrote nothing
+        if character_name == "":
             print("Please input a name.")
+            # Reset choice
             character_name = None
-        elif character_name == "EXIT":
-            return
-    # Prompt for starting reputation score
-    reputation = None
-    while reputation == None:
-        reputation = input("Please input the character's starting reputation (-10 : 10): ").strip()
-        
-        if reputation.lstrip('-').isnumeric():
-            reputation = int(reputation)
-        elif reputation == "EXIT":
-            return
-        else:
-            print("Please input a number.")
-            reputation = None
-    
-    new_npc = NPC(name = character_name, rep_score = reputation, is_alive = True)
+            # Next iteration
+            continue
+        # If the user chooses to exit
+        elif character_name == "EXIT": return
+    # Create a new NPC
+    new_npc = NPC(name = character_name)
+    # Add new NPC to list
     npcList.append(new_npc)
 
-    update(update_npcs = True)
-    print("Saving...")
-    # wb.save("TestSheet.xlsx")
-
+    print(f"\nAdded new NPC: {character_name}")
 # Create a new event
 def addNewEvent ():
     # Prompt the user to input the event date
     def promptDate () -> Date:
-        # Variable for the 
+        # Day of the month
         event_day = None
         while event_day == None:
             event_day = input("Please input the day of the month: ")
@@ -464,10 +455,9 @@ def addNewEvent ():
                 killed_list.append(character_id_string)
 
         return killed_list
-        
+
     # Intro message
     print("Welcome to the event creation wizard!\nType 'EXIT' at any time to return to the main menu.\n")
-
     # Variable for title input
     event_title = None
     # While user title input is invalid
@@ -477,98 +467,99 @@ def addNewEvent ():
         # If user chooses to exit
         if event_title == "EXIT": return
         # If description is only whitespace
-        elif event_title.isspace():
+        elif event_title == "":
             print("Please input a description.")
             # Reset input
             event_title = None
             # Nest iteration
             continue
+    # Prompt for the date of the event
+    event_date = promptDate()
     # Prompt for list of NPC/delta pairs
     delta_pairs = promptInvolvedList()
     # Prompt for list of killed NPC's
     killed_npcs = promptKilledList()
-    # Prompt for the date of the event
-    event_date = promptDate()
 
-
+    # Create new event
     new_event = Event(event_title, event_date, delta_pairs, killed_npcs)
+    # Add event to list
     eventsList.append(new_event)
-    print("\nAdded event: " + str(new_event)+ " (ID Number " + str(new_event.ident) + ")")
 
-    update(update_events = True)
-    print("Saving...")
-    # wb.save("TestSheet.xlsx")
+    print(f"\nAdded event: {str(new_event)}.")
 
 # Update workbook with current NPC's and Events
 def update(update_npcs:bool = True, update_events:bool = True):
     # wb.save("PartyStatus_Backup.xlsx")
+    print("\nUpdating NPC's...\n")
+    # Fill NPC data
+    for character in npcList:
+        # Get appropriate row from id
+        r = character.ident.num + 3
+        # Update npc cells
+        ws.cell(r, npcBounds["leftCol"]).value = character.name
+        ws.cell(r, npcBounds["rightCol"]).value = character.ident.num
+    print("\nDone.\n")
 
-    if update_npcs:
-        print("\nUpdating NPC's...\n")
-    
-        r:int = None
-        # Fill NPC data
-        for character in npcList:
-            # Get appropriate row from id
-            r = character.ident.num + 3
-
-            # Update npc cells
-            ws.cell(r, 2).value = character.name
-            ws.cell(r, 3).value = character.ident.num
-            ws.cell(r, 4).value = character.rep_score
-            ws.cell(r, 5).value = character.rep_category.name
-            ws.cell(r, 6).value = character.is_alive
-        
-        print("\nDone.\n")
-    
-    if update_events:
-        print("Updating Events...\n")
-
-        # Update event cells
-        for event in eventsList:
-            # Get appropriate row from id
-            r = event.ident.num + 3
-
-            ws.cell(r, 8).value = event.title
-            ws.cell(r, 9).value = event.date.day_num
-            ws.cell(r, 10).value = event.date.month
-            ws.cell(r, 11).value = event.date.year
-            ws.cell(r, 12).value = "Age of the First Pantheon"
-            # Update affected/delta cell
-            if len(event.involved) == 0:
-                ws.cell(r, 13).value = "None"
-            else:
-                ad_string = ""
-                for ad_tuple in event.involved:
-                    character:NPC = IDTracker.findByID(ad_tuple[0])
-                    id_num = str(character.ident.num)
-                    delta = str(ad_tuple[1])
-                    ad_string = ad_string + id_num + "/" + delta + ","
-                # Remove comma at the end of ad_string
-                ad_string = ad_string[:-1]
-                ws.cell(r, 13).value = ad_string
-            # Update killed cell
-            if len(event.killed) == 0:
-                ws.cell(r, 14).value = "None"
-            else:
-                killed_string = ""
-                for id_string in event.killed:
-                    character:NPC = IDTracker.findByID(id_string)
-                    id_num = str(character.ident.num)
-                    killed_string = killed_string + id_num + ","
-                # Remove comma at the end of killed_string
-                killed_string = killed_string[:-1]
-                ws.cell(r, 14).value = killed_string
-            # Update the id cell
-            ws.cell(r, 15).value = event.ident.num
-        
-        print("\nDone.\n")
+    print("Updating Events...\n")
+    # Update event cells
+    for event in eventsList:
+        # Get appropriate row from id
+        r = event.ident.num + 3
+        ws.cell(r, eventBounds["leftCol"]).value = event.title
+        ws.cell(r, eventBounds["leftCol"] + 1).value = event.date.day_num
+        ws.cell(r, eventBounds["leftCol"] + 2).value = event.date.month
+        ws.cell(r, eventBounds["leftCol"] + 3).value = event.date.year
+        ws.cell(r, eventBounds["leftCol"] + 4).value = "Age of the First Pantheon"
+        # Update affected/delta cell
+        # If no NPC's were involved
+        if len(event.involved) == 0:
+            ws.cell(r, eventBounds["leftCol"] + 5).value = "None"
+        else:
+            # Variable to store string representation of pair list
+            ad_string = ""
+            # For each NPC involved
+            for ad_tuple in event.involved:
+                # Find the NPC
+                character:NPC = IDTracker.findByID(ad_tuple[0])
+                # Store ID number
+                id_num = str(character.ident.num)
+                # Store the change in reputation
+                delta = str(ad_tuple[1])
+                # Add the info to the string
+                ad_string = ad_string + id_num + "/" + delta + ","
+            # Remove comma at the end of ad_string
+            ad_string = ad_string[:-1]
+            # Update the cell with list of pairs
+            ws.cell(r, eventBounds["leftCol"] + 5).value = ad_string
+        # Update killed cell
+        # If no NPC's were killed
+        if len(event.killed) == 0:
+            ws.cell(r, eventBounds["leftCol"] + 6).value = "None"
+        else:
+            # Variable to store string representation of killed list
+            killed_string = ""
+            # For each NPC killed
+            for id_string in event.killed:
+                # Find the NPC
+                character:NPC = IDTracker.findByID(id_string)
+                # Store ID number
+                id_num = str(character.ident.num)
+                # Add the ID number to the string
+                killed_string = killed_string + id_num + ","
+            # Remove comma at the end of killed_string
+            killed_string = killed_string[:-1]
+            # Update the cell with the ID number list
+            ws.cell(r, eventBounds["leftCol"] + 6).value = killed_string
+        # Update the id cell
+        ws.cell(r, 15).value = event.ident.num
+    print("\nDone.\n")
 
 # Save changes to workbook and close
 def saveAndClose ():
     print("Saving...")
     # wb.save("TestSheet.xlsx")
     wb.close()
+    print("Done.")
 
 def main():
     initializeData()
