@@ -129,7 +129,7 @@ def displayMainMenu ():
             # If the user chooses to exit
             if choice == -1: return
             # Decorate the chosen function with a line of hashtags
-            decorate(options[choice][0], item = '#')
+            decorate(func = options[choice][0], item = '#')
             # Reset choice
             choice = None
             # Next iteration
@@ -159,25 +159,46 @@ def displayMainMenu ():
     print("\n")
 # Search for an NPC and display its info to the user           
 def showNPCInfo ():
+    # String representing all NPC's and their ID numbers
+    help_table = ""
+    # Populate help_table
+    for npc in npcList:
+        # Store name
+        name = npc.name
+        # Store ID number with leading zeros for single-digit ID's
+        num = str(npc.ident.num).zfill(2)
+        # Add line to help_table
+        help_table = help_table + f"   {num}  :  {name}\n"
     # Intro message
-    print("Welcome to the NPC search!\n")
+    print("Welcome to the NPC search!\nType 'EXIT' to quit or 'HELP' for reference.\n")
     # Variable for user's input
     choice = None
     # While the user has not made a valid choice
     while choice == None:
         try:
             # Prompt user for input
-            choice = input("Please input the NPC's ID without holder tag (or <EXIT> to quit): ").strip()
+            choice = input("Please input the NPC's ID without holder tag: ").strip().upper()
+            # Gap
+            print(" ")
             # If the user chooses to exit
-            if choice == "<EXIT>": return
-            # The character associated by the inputted ID
-            character:NPC = IDTracker.findByID(choice + 'n')
-            # Display character summary
-            print(character.getSummary())
-            # Reset choice
-            choice = None
-            # Next iteration
-            continue
+            if choice == "EXIT": return
+            # If user asks for reference table
+            elif choice == "HELP":
+                print(help_table)
+                # Reset choice
+                choice = None
+                # Next iteration
+                continue
+            else:
+                # The character associated with the ID
+                # Cast from string to int back to string to remove leading zeros
+                character:NPC = IDTracker.findByID(str(int(choice)) + 'n')
+                # Display character summary
+                decorate( character.getSummary(), func = print )
+                # Reset choice
+                choice = None
+                # Next iteration
+                continue
         # If the input is not a valid ID
         except AttributeError:
             print("Please input a valid ID.")
@@ -187,32 +208,52 @@ def showNPCInfo ():
             continue
         # If some other error occurred
         except Exception as error:
-            print("Something went wrong, please try again.")
+            print(f"Something went wrong, please try again.")
             # Reset choice
             choice = None
             # Next iteration
             continue
-# Search for an event and display its info to the user           
+# Search for an event and display its info to the user
+# Syntax is largely the same as showNPCInfo() (Possible refactor?)           
 def showEventInfo ():
+    # String representing all eventss and their ID numbers
+    help_table = ""
+    # Populate help_table
+    for event in eventsList:
+        # Store name
+        name = event.name
+        # Store ID number with leading zeros for single-digit ID's
+        num = str(event.ident.num).zfill(2)
+        # Add line to help_table
+        help_table = help_table + f"   {num}  :  {name}\n"
     # Intro message
-    print("Welcome to the event search!\n")
+    print("Welcome to the NPC search!\nType 'EXIT' to quit or 'HELP' for reference.\n")
     # Variable for user's input
     choice = None
     # While the user has not made a valid choice
     while choice == None:
         try:
             # Prompt user for input
-            choice = input("Please input the event's ID without holder tag (or <EXIT> to quit): ").strip()
+            choice = input("Please input the event's ID without holder tag (or 'EXIT' to quit): ").strip()
             # If the user chooses to exit
-            if choice == "<EXIT>": return
-            # The event associated by the inputted ID
-            event:Event = IDTracker.findByID(choice + 'e')
-            # Display character summary
-            print(event.getSummary())
-            # Reset choice
-            choice = None
-            # Next iteration
-            continue
+            if choice == "EXIT": return
+            # If user asks for reference table
+            elif choice == "HELP":
+                print(help_table)
+                # Reset choice
+                choice = None
+                # Next iteration
+                continue
+            else:
+                # The character associated with the ID
+                # Cast from string to int back to string to remove leading zeros
+                event:Event = IDTracker.findByID(str(int(choice)) + 'e')
+                # Display event summary
+                decorate( event.getSummary(), func = print )
+                # Reset choice
+                choice = None
+                # Next iteration
+                continue
         # If the input is not a valid ID
         except AttributeError:
             print("Please input a valid ID.")
@@ -230,16 +271,16 @@ def showEventInfo ():
 # Create a new NPC
 def addNewNPC ():
     # Intro message
-    print("Welcome to the NPC creation wizard!\nType <EXIT> at any time to return to the main menu.\n")
-
+    print("Welcome to the NPC creation wizard!\nType 'EXIT' at any time to return to the main menu.\n")
     # Prompt for NPC name
     character_name = None
+    # While user has not submitted a valid input
     while character_name == None:
         character_name = input("Please input the NPC's name : ").strip()
         if character_name.lstrip(" ") == "":
             print("Please input a name.")
             character_name = None
-        elif character_name == "<EXIT>":
+        elif character_name == "EXIT":
             return
     # Prompt for starting reputation score
     reputation = None
@@ -248,7 +289,7 @@ def addNewNPC ():
         
         if reputation.lstrip('-').isnumeric():
             reputation = int(reputation)
-        elif reputation == "<EXIT>":
+        elif reputation == "EXIT":
             return
         else:
             print("Please input a number.")
@@ -261,8 +302,50 @@ def addNewNPC ():
     print("Saving...")
     # wb.save("TestSheet.xlsx")
 
-# Create a new NPC
+# Create a new event
 def addNewEvent ():
+    # Prompt the user to input the event date
+    def promptDate () -> Date:
+        # Variable for the 
+        event_day = None
+        while event_day == None:
+            event_day = input("Please input the day of the month: ")
+            if event_day.lstrip('-').isnumeric() and 1 <= int(event_day) <= 27:
+                event_day = int(event_day)
+            elif event_day== "EXIT":
+                return
+            else:
+                print("Please input a valid day.")
+                event_day = None
+        event_month = None
+        while event_month == None:
+            event_month = input("Please input the month: ")
+            if event_month.isnumeric():
+                if 1 <= int(event_month) <= 16:
+                    event_month = Month(int(event_month))
+                else:
+                    print("Please input a valid month.")
+                    event_month = None
+            elif event_month.strip().upper() in Month.__members__:
+                event_month = Month[event_month.strip().upper()]
+            elif event_title == "EXIT":
+                return
+            else:
+                print("Please input a valid month.")
+                event_month = None
+        event_year = None
+        while event_year == None:
+            event_year = input("Please input the year: ")
+            if event_year.lstrip('-').isnumeric() and 1 <= int(event_day) <= 27:
+                event_year = int(event_year)
+            elif event_year == "EXIT":
+                return
+            else:
+                print("Please input a valid year.")
+                event_year = None
+        
+        result = Date(event_day, event_month, event_year)
+        return result
     # Prompt the user to generate a list of NPC/delta pairs
     def promptInvolvedList () -> list[tuple[str, int]]:
         involved_list:list[tuple[str, int]] = []
@@ -296,7 +379,7 @@ def addNewEvent ():
                         while character_name == None:
                             character_name = input("Please input the name of the involved NPC: ").strip()
                             character:NPC = None
-                            if character_name == "<EXIT>":
+                            if character_name == "EXIT":
                                 return -1
                             character_name = character_name.lower()
                             for n in npcList:
@@ -320,7 +403,7 @@ def addNewEvent ():
                     case 'N':
                         adding_pair = False
                         break
-                    case "<EXIT>":
+                    case "EXIT":
                         return -1
                     case _:
                         print("Please input a valid option")
@@ -371,7 +454,7 @@ def addNewEvent ():
                     case 'N':
                         adding_npc = False
                         break
-                    case "<EXIT>":
+                    case "EXIT":
                         return -1
                     case _:
                         print("Please input a valid option")
@@ -381,67 +464,32 @@ def addNewEvent ():
                 killed_list.append(character_id_string)
 
         return killed_list
-    
         
     # Intro message
-    print("Welcome to the event creation wizard!\nType <EXIT> at any time to return to the main menu.\n")
+    print("Welcome to the event creation wizard!\nType 'EXIT' at any time to return to the main menu.\n")
 
-    # Prompt for event title/description
+    # Variable for title input
     event_title = None
+    # While user title input is invalid
     while event_title == None:
-        event_title = input("Please input a single-sentence description of the event: ")
-        if event_title.strip() == "":
+        # Take input
+        event_title = input("Please input a single-sentence description of the event: ").strip()
+        # If user chooses to exit
+        if event_title == "EXIT": return
+        # If description is only whitespace
+        elif event_title.isspace():
             print("Please input a description.")
+            # Reset input
             event_title = None
-        elif event_title == "<EXIT>":
-            return
-    # Prompt for event date
-    event_day = None
-    while event_day == None:
-        event_day = input("Please input the day of the month: ")
-        if event_day.lstrip('-').isnumeric() and 1 <= int(event_day) <= 27:
-            event_day = int(event_day)
-        elif event_day== "<EXIT>":
-            return
-        else:
-            print("Please input a valid day.")
-            event_day = None
-    event_month = None
-    while event_month == None:
-        event_month = input("Please input the month: ")
-        if event_month.isnumeric():
-            if 1 <= int(event_month) <= 16:
-                event_month = Month(int(event_month))
-            else:
-                print("Please input a valid month.")
-                event_month = None
-        elif event_month.strip().upper() in Month.__members__:
-            event_month = Month[event_month.strip().upper()]
-        elif event_title == "<EXIT>":
-            return
-        else:
-            print("Please input a valid month.")
-            event_month = None
-    event_year = None
-    while event_year == None:
-        event_year = input("Please input the year: ")
-        if event_year.lstrip('-').isnumeric() and 1 <= int(event_day) <= 27:
-            event_year = int(event_year)
-        elif event_year == "<EXIT>":
-            return
-        else:
-            print("Please input a valid year.")
-            event_year = None
-    
-    event_date = Date(event_day, event_month, event_year)
+            # Nest iteration
+            continue
     # Prompt for list of NPC/delta pairs
     delta_pairs = promptInvolvedList()
-    if delta_pairs == -1:
-        return
     # Prompt for list of killed NPC's
     killed_npcs = promptKilledList()
-    if killed_npcs == -1:
-        return
+    # Prompt for the date of the event
+    event_date = promptDate()
+
 
     new_event = Event(event_title, event_date, delta_pairs, killed_npcs)
     eventsList.append(new_event)
@@ -528,4 +576,4 @@ def main():
     update()
     saveAndClose()
 
-decorate(main)
+decorate(func = main)

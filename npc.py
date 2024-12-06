@@ -66,8 +66,7 @@ class NPC:
         return
     # Returns a summary of NPC
     def getSummary (self) -> str:
-        result = """
-        Summary of {0}:
+        result = """\tSummary of {0}:
 
       Reputation Score  :  {1}
 
