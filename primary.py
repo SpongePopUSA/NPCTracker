@@ -29,7 +29,7 @@ eventsList:list[Event] = []
 # List of NPC's
 npcList:list[NPC] = []
 
-# Populate event and NPC lists
+# Populate NPC and event lists
 def initializeData ():
     print("Initializing NPC's...\n")
     # Iterate across NPC table
@@ -62,7 +62,6 @@ def initializeData ():
             m = int(val[2])
             # Store year
             y = int(val[3])
-
             # Store list of affected/delta pairs
             ad_pairs:list[str] = str(val[4]).split(",")
             # List of (affected, delta) tuples
@@ -510,11 +509,10 @@ def update(update_npcs:bool = True, update_events:bool = True):
         ws.cell(r, eventBounds["leftCol"] + 1).value = event.date.day_num
         ws.cell(r, eventBounds["leftCol"] + 2).value = event.date.month
         ws.cell(r, eventBounds["leftCol"] + 3).value = event.date.year
-        ws.cell(r, eventBounds["leftCol"] + 4).value = "Age of the First Pantheon"
         # Update affected/delta cell
         # If no NPC's were involved
         if len(event.involved) == 0:
-            ws.cell(r, eventBounds["leftCol"] + 5).value = "None"
+            ws.cell(r, eventBounds["leftCol"] + 4).value = "None"
         else:
             # Variable to store string representation of pair list
             ad_string = ""
@@ -531,11 +529,11 @@ def update(update_npcs:bool = True, update_events:bool = True):
             # Remove comma at the end of ad_string
             ad_string = ad_string[:-1]
             # Update the cell with list of pairs
-            ws.cell(r, eventBounds["leftCol"] + 5).value = ad_string
+            ws.cell(r, eventBounds["leftCol"] + 4).value = ad_string
         # Update killed cell
         # If no NPC's were killed
         if len(event.killed) == 0:
-            ws.cell(r, eventBounds["leftCol"] + 6).value = "None"
+            ws.cell(r, eventBounds["leftCol"] + 5).value = "None"
         else:
             # Variable to store string representation of killed list
             killed_string = ""
@@ -550,11 +548,10 @@ def update(update_npcs:bool = True, update_events:bool = True):
             # Remove comma at the end of killed_string
             killed_string = killed_string[:-1]
             # Update the cell with the ID number list
-            ws.cell(r, eventBounds["leftCol"] + 6).value = killed_string
+            ws.cell(r, eventBounds["leftCol"] + 5).value = killed_string
         # Update the id cell
-        ws.cell(r, 15).value = event.ident.num
+        ws.cell(r, eventBounds["leftCol"] + 6).value = event.ident.num
     print("\nDone.\n")
-
 # Save changes to workbook and close
 def saveAndClose ():
     print("Saving...")
