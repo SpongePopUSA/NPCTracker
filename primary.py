@@ -338,40 +338,69 @@ def addNewEvent ():
         return result
     # Prompt the user to generate a list of NPC/delta pairs
     def promptInvolvedList () -> list[tuple[str, int]]:
+        # List of ID/delta pairs
         involved_list:list[tuple[str, int]] = []
-
+        # Boolean: True = Continue prompting, False = Done prompting
         adding_pair:bool = True
-        while adding_pair:
-            character_id_string = ""
-            delta:int = None
 
-            involved_string = ""
-            for i in involved_list:
-                character:NPC = IDTracker.findByID(i[0])
+        while adding_pair:
+            # String representation of the character's ID 
+            character_id_string = ""
+            # Change to character's reputation score
+            delta:int = None
+            # String representation of already added characters, will be printed after all characters are added
+            involved_string = "Involved: "
+
+            # Iterate across list of added NPC's
+            for inv in involved_list:
+                # Actual character object
+                character:NPC = IDTracker.findByID(inv[0])
+                # Change to reputation score, represented by a string to append +/- sign
                 delta_string:str = ""
-                if i[1] >= 0:
-                    delta_string = '+' + str(i[1])
+                # If the change to reputation score is positive or zero
+                if inv[1] >= 0:
+                    # Add a plus sign to the string
+                    delta_string = '+' + str(inv[1])
+                # If the change to reputation score is negative
                 else:
-                    delta_string = str(i[1])
+                    # Cast the int to a string (- sign will already be included)
+                    delta_string = str(inv[1])
+                # Add this character to the string representation
                 involved_string = involved_string + character.name + ' (' + delta_string + ')' + ", "
+            # Remove tailing comma
             involved_string = involved_string.rstrip(", ")
+            # If no characters have been added
             if len(involved_list) == 0:
                 print("\nNo involved NPC's.\n")
+            # If 1+ characters have already been added
             else:
-                print("\nInvolved: " + involved_string + "\n")
-            
+                # Show list of already added characters
+                print(f"\n{involved_string}\n")
+            # If the user wants to add more characters
             choice = 'Y'
+            # While the user is still adding characters
             while choice == 'Y':
+                # Ask the user if they would like to add another NPC
                 choice = input("Add involved NPC? (Y/N) ").strip().upper()
                 match choice:
                     case 'Y':
+                        # Name of character to be added
                         character_name = None
+                        # While the user has not submitted a name
                         while character_name == None:
+                            # Prompt for name
                             character_name = input("Please input the name of the involved NPC: ").strip()
+                            # Character object of chosen NPC
                             character:NPC = None
-                            if character_name == "EXIT":
-                                return -1
+                            # If user chooses to exit
+                            if character_name == "EXIT": return
+                            # Set the name to lower case
                             character_name = character_name.lower()
+                            # Check that user has not already submitted the same character
+                            if involved_string.lower().find(character_name) != -1:
+                                print("Duplicates are not allowed.")
+                                character_name = None
+                                continue
                             for n in npcList:
                                 if n.name.lower() == character_name:
                                     character = n
@@ -382,6 +411,7 @@ def addNewEvent ():
                             else:
                                 print("Please input a valid NPC name.")
                                 character_name = None
+                                continue
                         while delta == None:
                             delta_input = input("Please input the change in reputation score for this NPC: ").strip()
                             if delta_input.lstrip('-').isnumeric():
@@ -429,6 +459,11 @@ def addNewEvent ():
                         character_name = None
                         while character_name == None:
                             character_name = input("Please input the name of the killed NPC: ").strip().lower()
+                            # Check that user has not already submitted the same character
+                            if killed_string.lower().find(character_name) != -1:
+                                print("Duplicates are not allowed.")
+                                character_name = None
+                                continue
                             character:NPC = None
                             for n in npcList:
                                 if n.name.lower() == character_name:
@@ -485,7 +520,6 @@ def addNewEvent ():
     eventsList.append(new_event)
 
     print(f"\nAdded event: {str(new_event)}.")
-
 # Update workbook with current NPC's and Events
 def update(update_npcs:bool = True, update_events:bool = True):
     # Save backup
