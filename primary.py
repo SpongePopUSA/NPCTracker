@@ -199,8 +199,8 @@ def showNPCInfo ():
                 # Next iteration
                 continue
         # If the input is not a valid ID
-        except AttributeError:
-            print("Please input a valid ID.")
+        except (AttributeError, ValueError):
+            print("Please input a valid ID.\n")
             # Reset choice
             choice = None
             # Next iteration
@@ -234,6 +234,8 @@ def showEventInfo ():
         try:
             # Prompt user for input
             choice = input("Please input the event's ID without holder tag: ").strip().upper()
+            # Gap
+            print(" ")
             # If the user chooses to exit
             if choice == "EXIT": return
             # If user asks for reference table
@@ -254,8 +256,8 @@ def showEventInfo ():
                 # Next iteration
                 continue
         # If the input is not a valid ID
-        except AttributeError:
-            print("Please input a valid ID.")
+        except (AttributeError, ValueError):
+            print("Please input a valid ID.\n")
             # Reset choice
             choice = None
             # Next iteration
