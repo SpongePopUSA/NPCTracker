@@ -10,7 +10,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 import time
 
 # Initialize workbook and worksheet
-wb:Workbook = load_workbook("TestSheet.xlsx")
+wb:Workbook = load_workbook("PartyStatus.xlsx")
 ws:Worksheet = wb.active
 # Bounds of npc table
 npcBounds = {
@@ -490,6 +490,7 @@ def addNewEvent ():
 def update(update_npcs:bool = True, update_events:bool = True):
     # Save backup
     wb.save("PartyStatus_Backup.xlsx")
+
     print("\nUpdating NPC's...\n")
     # Fill NPC data
     for character in npcList:
@@ -555,7 +556,7 @@ def update(update_npcs:bool = True, update_events:bool = True):
 # Save changes to workbook and close
 def saveAndClose ():
     print("Saving...")
-    wb.save("TestSheet.xlsx")
+    wb.save("PartyStatus.xlsx")
     wb.close()
     print("Done.")
 

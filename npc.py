@@ -66,13 +66,11 @@ class NPC:
         return
     # Returns a summary of NPC
     def getSummary (self) -> str:
-        result = """\tSummary of {0}:
+        result = f"""\tSummary of {self.name}:
 
-      Reputation Score  :  {1}
+        \tReputation  :\t{self.rep_score} ({self.rep_category.name.capitalize()})
 
-   Reputation Category  :  {2}
-        
-                Alive?  :  {3}
-                """.format(self.name, self.rep_score, self.rep_category.name.capitalize(), self.is_alive)
+        \t     Alive  :\t{self.is_alive}
+        """
 
         return result
